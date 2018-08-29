@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">ixride</string>
+    <string name="name">Name</string>
+    <string name="user_name">User name</string>
+    <string name="password">Password</string>
+    <string name="phone_number">Phone number</string>
+    <string name="car_owner_text">Car owner</string>
+    <string name="car_seats_label">Car seats</string>
+    <string name="car_registration_number">Car registration number</string>
+    <string name="address">Address</string>
+    <string name="sign_in">Sign in</string>
+    <string name="register_btn">Register</string>
+    <string name="register_link">Register here</string>
+    <string name="title_activity_main">Map</string>
 </resources>
