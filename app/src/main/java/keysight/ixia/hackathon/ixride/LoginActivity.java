@@ -3,10 +3,15 @@ package keysight.ixia.hackathon.ixride;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import keysight.ixia.hackathon.ixride.model.RetroUser;
+import keysight.ixia.hackathon.ixride.service.UserService;
+import keysight.ixia.hackathon.ixride.service.implementation.UserServiceImpl;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -14,6 +19,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText userPassword;
     private TextView registerLinkView;
     private Button signInBtn;
+
+    private UserService userService = new UserServiceImpl();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void login() {
+        //check backend api call
+        new Thread(() -> {
+            for (RetroUser retroUser : userService.getAllUsers()) {
+                Log.d("Users: ", retroUser.getUsername() + " " + retroUser.getPassword());
+            }
+        }).start();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
