@@ -13,6 +13,7 @@ public class RetroUser {
     @SerializedName("password")
     private String password;
 
+
     public RetroUser() {
 
     }
@@ -51,4 +52,6 @@ public class RetroUser {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }
