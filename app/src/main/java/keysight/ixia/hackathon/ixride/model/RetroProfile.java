@@ -22,6 +22,7 @@ public class RetroProfile {
     @SerializedName("isDriver")
     private boolean isDriver;
 
+
     public RetroProfile() {
     }
 

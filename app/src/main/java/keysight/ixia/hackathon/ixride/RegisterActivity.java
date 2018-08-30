@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -34,9 +35,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import keysight.ixia.hackathon.ixride.model.RetroCar;
+import keysight.ixia.hackathon.ixride.model.RetroProfile;
+import keysight.ixia.hackathon.ixride.model.RetroUser;
+import keysight.ixia.hackathon.ixride.retrofit.RetrofitAPIService;
 
 public class RegisterActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMarkerDragListener {
 
@@ -71,6 +79,11 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
 
         adressMap = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.adressMap);
         adressMap.getMapAsync(this);
+
+        registerUserPassword = findViewById(R.id.registerUserPassword);
+        registerUserName = findViewById(R.id.registerUserName);
+        registerUserPhone = findViewById(R.id.registerUserPhone);
+        registerName = findViewById(R.id.registerName);
 
         registerCarOwnerCheckBox = findViewById(R.id.registerCarOwnner);
         registerCarSeatsLabel = findViewById(R.id.registerCarSeatsLabel);
@@ -175,8 +188,22 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void register() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        clearErrors();
+
+        boolean cancel = validateFields();
+        if (cancel) {
+            Toast.makeText(getApplicationContext(), "Complete all fields!", Toast.LENGTH_SHORT).show();
+        } else {
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    createAccount();
+                }
+            }).start();
+
+        }
+
     }
 
     @Override
@@ -193,4 +220,104 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
         adressPoint = marker.getPosition();
         Log.i("MapsActivity", "Final location: " + adressPoint.latitude + " " + adressPoint.longitude);
     }
+
+    private void clearErrors() {
+        registerName.setError(null);
+        registerUserName.setError(null);
+        registerUserPassword.setError(null);
+        registerUserPhone.setError(null);
+
+    }
+
+    private boolean validateFields() {
+        boolean cancel = false;
+
+        String registername = registerName.getText().toString();
+        String registerusername = registerUserName.getText().toString();
+        String registeruserpassword = registerUserPassword.getText().toString();
+        String registeruserphone = registerUserPhone.getText().toString();
+        Boolean registerisdriver = registerCarOwnerCheckBox.isChecked();
+
+        if (TextUtils.isEmpty(registername)) {
+            registerName.setError("This field is required!");
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(registerusername)) {
+            registerUserName.setError("This field is required!");
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(registeruserpassword)) {
+            registerUserPassword.setError("This field is required!");
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(registeruserphone)) {
+            registerUserPhone.setError("This field is required!");
+            cancel = true;
+        }
+
+        if (registerisdriver) {
+            String registerlicenseplate = registerCarPlate.getText().toString();
+            if (TextUtils.isEmpty(registerlicenseplate)) {
+                registerCarPlate.setError("This field is required!");
+                cancel = true;
+            }
+        }
+
+        return cancel;
+
+    }
+
+    private void createAccount() {
+        RetrofitAPIService retrofitAPIService = RetrofitAPIService.aRetrofitApiService();
+
+        String registername = registerName.getText().toString();
+        String registerusername = registerUserName.getText().toString();
+        String registeruserpassword = registerUserPassword.getText().toString();
+        String registeruserphone = registerUserPhone.getText().toString();
+        Boolean registerisdriver = registerCarOwnerCheckBox.isChecked();
+
+        RetroUser user = new RetroUser(registerusername, registeruserpassword);
+        RetroUser insertedUser = retrofitAPIService.addNewUser(user);
+        if (insertedUser != null) {
+            RetroProfile retroProfile = new RetroProfile();
+            retroProfile.setAddressLatitude(43.10);
+            retroProfile.setAddressLongitude(43.20);
+            retroProfile.setDriver(registerisdriver);
+            retroProfile.setName(registername);
+            retroProfile.setPhone(registeruserphone);
+            RetroProfile insertedProfile = retrofitAPIService.addNewProfile(insertedUser.getId(), retroProfile);
+
+            if (insertedProfile != null) {
+                if (retroProfile.isDriver()) {
+                    String carlicenseplate = registerCarPlate.getText().toString();
+                    RetroCar car = new RetroCar();
+                    car.setLicensePlate(carlicenseplate);
+                    car.setSeatsNumber(Integer.parseInt(registerCarSeatsSpinner.getSelectedItem().toString()));
+                    RetroCar insertedRetroCar = retrofitAPIService.addNewCar(insertedProfile.getId(), car);
+                    if (insertedRetroCar != null) {
+                        switchIntent();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Unable to register! Retry", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    switchIntent();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "Unable to register! Retry", Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+
+    }
+
+    public void switchIntent() {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
+
+    }
+
 }

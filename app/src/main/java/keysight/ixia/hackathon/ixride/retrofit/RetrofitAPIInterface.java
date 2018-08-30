@@ -2,11 +2,14 @@ package keysight.ixia.hackathon.ixride.retrofit;
 
 import java.util.List;
 
+import keysight.ixia.hackathon.ixride.model.RetroCar;
+import keysight.ixia.hackathon.ixride.model.RetroProfile;
 import keysight.ixia.hackathon.ixride.model.RetroUser;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 public interface RetrofitAPIInterface {
 
@@ -15,4 +18,13 @@ public interface RetrofitAPIInterface {
 
     @POST("/auth")
     Call<RetroUser> authorizeUser(@Body RetroUser user);
+
+    @POST("/users")
+    Call<RetroUser> addNewUser(@Body RetroUser user);
+
+    @POST("/users/{userId}/profiles")
+    Call<RetroProfile> addNewProfile(@Path("userId") Long userId, @Body RetroProfile profile);
+
+    @POST("/profiles/{profileId}/cars")
+    Call<RetroCar> addNewCar(@Path("profileId") Long profileId, @Body RetroCar car);
 }
