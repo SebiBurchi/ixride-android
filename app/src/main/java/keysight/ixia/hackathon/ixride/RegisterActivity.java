@@ -44,6 +44,7 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
         setContentView(R.layout.activity_register);
 
         adressMap = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.adressMap);
+        adressMap.getMapAsync(this);
         registerCarOwnerCheckBox = findViewById(R.id.registerCarOwnner);
         registerCarSeatsLabel = findViewById(R.id.registerCarSeatsLabel);
         registerCarSeatsSpinner = findViewById(R.id.registerCarSeats);
