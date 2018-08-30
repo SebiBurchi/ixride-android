@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ixride</string>
+    <string name="app_name">IxRide</string>
     <string name="name">Name</string>
     <string name="user_name">User name</string>
     <string name="password">Password</string>

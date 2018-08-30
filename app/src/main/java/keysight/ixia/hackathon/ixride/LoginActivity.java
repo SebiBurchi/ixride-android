@@ -32,6 +32,23 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        Intent iin = getIntent();
+        Bundle b = iin.getExtras();
+        if (b != null) {
+            String actionMade = (String) b.get("action");
+            switch (actionMade) {
+                case "deleteAccount":
+                    Toast.makeText(getApplicationContext(), "The account was deleted!", Toast.LENGTH_SHORT).show();
+                    break;
+                case "createAccount":
+                    Toast.makeText(getApplicationContext(), "The account was created!", Toast.LENGTH_SHORT).show();
+                    break;
+                case "Logout":
+                    Toast.makeText(getApplicationContext(), "Session lost!", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+
         userName = (EditText) findViewById(R.id.loginUserName);
         userPassword = (EditText) findViewById(R.id.loginUserPassword);
         registerLinkView = (TextView) findViewById(R.id.loginRegisterLink);
@@ -86,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
                     Runnable runnable = new Runnable() {
                         @Override
                         public void run() {
-                            if (authUser.getId()!= null) {
+                            if (authUser.getId() != null) {
                                 SharedPreferences sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
                                 AuthenticationHolder.getInstance().setAuthUser(authUser, sharedPreferences);
                                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);

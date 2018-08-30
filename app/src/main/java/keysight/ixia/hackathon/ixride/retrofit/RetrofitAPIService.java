@@ -78,5 +78,49 @@ public class RetrofitAPIService {
         return null;
     }
 
+    public Long removeUser(Long userId) {
+        Call<Long> call = retrofitAPIInterface.deleteUser(userId);
+        try {
+            Long body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
 
+    }
+
+    public RetroUser getUserById(Long userId) {
+        Call<RetroUser> call = retrofitAPIInterface.getUserById(userId);
+        try {
+            RetroUser body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+    public RetroProfile getProfileByUser(Long userId) {
+        Call<RetroProfile> call = retrofitAPIInterface.getProfileByUser(userId);
+        try {
+            RetroProfile body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public RetroCar getCarByProfile(Long profileId) {
+        Call<RetroCar> call = retrofitAPIInterface.getCarByProfile(profileId);
+        try {
+            RetroCar body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
