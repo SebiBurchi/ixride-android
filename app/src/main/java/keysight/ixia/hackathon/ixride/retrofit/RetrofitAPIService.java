@@ -123,4 +123,40 @@ public class RetrofitAPIService {
         }
         return null;
     }
+
+    public RetroUser updateUser(RetroUser userToUpdate, Long userId) {
+        Call<RetroUser> call = retrofitAPIInterface.updateUser(userToUpdate, userId);
+        try {
+            RetroUser body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public RetroProfile updateProfile(RetroProfile profileToUpdate, Long userId) {
+        Call<RetroProfile> call = retrofitAPIInterface.updateProfile(profileToUpdate, userId);
+        try {
+            RetroProfile body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public RetroCar updateCar(RetroCar carToUpdate, Long profileId) {
+        Call<RetroCar> call = retrofitAPIInterface.updateCar(carToUpdate, profileId);
+        try {
+            RetroCar body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

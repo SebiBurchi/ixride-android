@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -72,6 +73,7 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
     Marker currLocationMarker;
     FusedLocationProviderClient fusedLocationClient;
     LatLng adressPoint;
+    LatLng storedLocation;
 
     private static final List<Integer> seatsList = new ArrayList<Integer>(Arrays.asList(1, 2, 3, 4, 5, 6, 7));
     private static final int REQUEST_LOCATION_CODE = 0;
@@ -80,6 +82,8 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
     private RetroUser updateUser;
     private RetroProfile updateProfile;
     private RetroCar updateCar;
+
+    private String actionMade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,14 +126,18 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                register();
+                if (registerBtn.getText().equals("Update")) {
+                    updateRegister();
+                } else {
+                    register();
+                }
             }
         });
 
         Intent iin = getIntent();
         Bundle b = iin.getExtras();
         if (b != null) {
-            String actionMade = (String) b.get("action");
+            actionMade = (String) b.get("action");
             if (actionMade.equals("edit")) {
                 Thread thread = new Thread(new Runnable() {
                     @Override
@@ -147,6 +155,54 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
 
             }
         }
+    }
+
+    private void updateAccount() {
+        RetrofitAPIService retrofitAPIService = RetrofitAPIService.aRetrofitApiService();
+        SharedPreferences sharedPreferences = getSharedPreferences("Login", MODE_PRIVATE);
+        String registerusername = registerUserName.getText().toString();
+        String registeruserpassword = registerUserPassword.getText().toString();
+        RetroUser userToUpdate = new RetroUser(registerusername, registeruserpassword);
+        RetroUser userUpdated = retrofitAPIService.updateUser(userToUpdate, AuthenticationHolder.getInstance().getAuthUser(sharedPreferences));
+        if (userUpdated != null) {
+            String registername = registerName.getText().toString();
+            String registeruserphone = registerUserPhone.getText().toString();
+            Boolean registerisdriver = registerCarOwnerCheckBox.isChecked();
+            RetroProfile profileToUpdate = new RetroProfile(registername, registeruserphone, adressPoint.longitude, adressPoint.latitude, registerisdriver);
+            RetroProfile profileUpdated = retrofitAPIService.updateProfile(profileToUpdate, userUpdated.getId());
+            if (profileUpdated != null) {
+                if (profileUpdated.isDriver()) {
+                    String registerlicenseplate = registerCarPlate.getText().toString();
+                    Integer carSeatsNo = Integer.parseInt(registerCarSeatsSpinner.getSelectedItem().toString());
+                    RetroCar carToUpdate = new RetroCar(registerlicenseplate, carSeatsNo);
+                    RetroCar carUpdated = retrofitAPIService.updateCar(carToUpdate, profileUpdated.getId());
+                    if (carUpdated != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Error updating the profile!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                } else {
+                    Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "Error updating the profile!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        } else {
+            Toast.makeText(getApplicationContext(), "Error updating the profile!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
     }
 
     public void populateForm() {
@@ -183,11 +239,18 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
             registerUserPassword.setText(updateUser.getPassword() != null ? updateUser.getPassword() : "");
             registerUserPhone.setText(updateProfile.getPhone() != null ? updateProfile.getPhone() : "");
             registerName.setText(updateProfile.getName() != null ? updateProfile.getName() : "");
+            storedLocation = new LatLng(updateProfile.getAddressLatitude(), updateProfile.getAddressLongitude());
+            adressPoint = storedLocation;
+
 
             if (updateProfile.isDriver()) {
                 registerCarOwnerCheckBox.setChecked(true);
                 if (updateCar != null) {
                     registerCarPlate.setText(updateCar.getLicensePlate() != null ? updateCar.getLicensePlate() : "");
+                    ArrayAdapter<Integer> adapter = (ArrayAdapter<Integer>) registerCarSeatsSpinner.getAdapter();
+                    int spinnerPosition = adapter.getPosition(updateCar.getSeatsNumber());
+                    registerCarSeatsSpinner.setSelection(spinnerPosition);
+
                 }
             }
 
@@ -240,7 +303,13 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
                 if (currLocationMarker != null) {
                     currLocationMarker.remove();
                 }
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                LatLng latLng;
+                if (storedLocation != null && actionMade.equals("edit")) {
+                    latLng = storedLocation;
+                } else {
+                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                }
+                adressPoint = latLng;
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.position(latLng);
                 markerOptions.title("Pick up point");
@@ -288,6 +357,24 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
 
     }
 
+    private void updateRegister() {
+        clearErrors();
+
+        boolean cancel = validateFields();
+        if (cancel) {
+            Toast.makeText(getApplicationContext(), "Complete all fields!", Toast.LENGTH_SHORT).show();
+        } else {
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    updateAccount();
+                }
+            }).start();
+
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -295,8 +382,20 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
         MenuItem itemDelete = menu.findItem(R.id.action_delete_account);
         MenuItem itemLogout = menu.findItem(R.id.action_logout);
         MenuItem itemEdit = menu.findItem(R.id.action_edit_profile);
+        MenuItem itemHome = menu.findItem(R.id.action_home);
         itemDelete.setVisible(false);
-        itemLogout.setVisible(false);
+        Intent iin = getIntent();
+        Bundle b = iin.getExtras();
+        String action = "";
+        if (b != null) {
+            action = (String) b.get("action");
+        }
+        if (!action.equals("edit")) {
+            itemHome.setVisible(false);
+            itemLogout.setTitle("Sign In");
+        } else {
+            itemLogout.setVisible(false);
+        }
         itemEdit.setVisible(false);
         return true;
     }
@@ -308,6 +407,11 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
 
             case R.id.action_home:
                 intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.action_logout:
+                intent = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(intent);
                 break;
 
@@ -386,14 +490,14 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
         String registerusername = registerUserName.getText().toString();
         String registeruserpassword = registerUserPassword.getText().toString();
         String registeruserphone = registerUserPhone.getText().toString();
-        Boolean registerisdriver = registerCarOwnerCheckBox.isChecked();
+        boolean registerisdriver = registerCarOwnerCheckBox.isChecked();
 
         RetroUser user = new RetroUser(registerusername, registeruserpassword);
         RetroUser insertedUser = retrofitAPIService.addNewUser(user);
         if (insertedUser != null) {
             RetroProfile retroProfile = new RetroProfile();
-            retroProfile.setAddressLatitude(43.10);
-            retroProfile.setAddressLongitude(43.20);
+            retroProfile.setAddressLatitude(adressPoint.latitude);
+            retroProfile.setAddressLongitude(adressPoint.longitude);
             retroProfile.setDriver(registerisdriver);
             retroProfile.setName(registername);
             retroProfile.setPhone(registeruserphone);

@@ -16,6 +16,11 @@ public class RetroCar {
     public RetroCar() {
     }
 
+    public RetroCar(String licensePlate, int seatsNumber) {
+        this.licensePlate = licensePlate;
+        this.seatsNumber = seatsNumber;
+    }
+
     public Long getId() {
         return Id;
     }

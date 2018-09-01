@@ -19,7 +19,7 @@ public class RetroProfile {
     @SerializedName("addressLatitude")
     private double addressLatitude;
 
-    @SerializedName("isDriver")
+    @SerializedName("driver")
     private boolean isDriver;
 
 

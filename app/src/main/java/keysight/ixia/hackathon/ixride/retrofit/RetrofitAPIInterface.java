@@ -10,6 +10,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface RetrofitAPIInterface {
@@ -39,5 +40,14 @@ public interface RetrofitAPIInterface {
     Call<RetroProfile> getProfileByUser(@Path("userId") long userId);
 
     @GET("/profiles/{profileId}/car")
-    Call<RetroCar> getCarByProfile(long profileId);
+    Call<RetroCar> getCarByProfile(@Path("profileId") long profileId);
+
+    @PUT("/users/{userId}")
+    Call<RetroUser> updateUser(@Body RetroUser userToUpdate, @Path("userId") Long userId);
+
+    @PUT("/users/{userId}/profile")
+    Call<RetroProfile> updateProfile(@Body RetroProfile profileToUpdate, @Path("userId") Long userId);
+
+    @PUT("/profiles/{profileId}/car")
+    Call<RetroCar> updateCar(@Body RetroCar carToUpdate, @Path("profileId") Long profileId);
 }
