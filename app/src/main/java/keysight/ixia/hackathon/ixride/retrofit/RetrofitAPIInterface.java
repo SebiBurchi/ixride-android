@@ -54,4 +54,7 @@ public interface RetrofitAPIInterface {
 
     @GET("/profiles/{userId}/routes")
     Call<PreliminaryRoute> getPreliminaryRoute(@Path("userId") long profileId);
+
+    @GET("/sendnotification")
+    Call<Object> sendNotification();
 }

@@ -168,4 +168,16 @@ public class RetrofitAPIService {
         }
         return null;
     }
+
+    public Object sendNotification() {
+        Call<Object> call = retrofitAPIInterface.sendNotification();
+        try {
+            Object body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

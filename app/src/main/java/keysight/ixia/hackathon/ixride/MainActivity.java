@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private Intent intent;
     private List<LatLng> markerPoints = new ArrayList<>();
-    private static final String API_KEY = "AIzaSyA-qYiBuJcp8YvhXFDueLv-QzvQvhlVuIg";
+    private static final String API_KEY = "AIzaSyDHTsHZzv8_ixNHTNGeJFFpU3byGVmw-dQ";
     private static final String googleRoutesUrl = "https://maps.googleapis.com/maps/api/directions/";
 
     private RetrofitRouteInterface retrofitRouteService;
@@ -259,6 +259,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.i("MainActivity", "You will pick up " + (markerPoints.size() - 2) + " people.");
                 routeMessage.setText("You will pick up " + (markerPoints.size() - 2) + " people.");
             }
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    retrofitAPIService.sendNotification();
+                }
+            }).start();
         } else {
             routeMessage.setText("No routes found!");
         }

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "498553070751",
+    "firebase_url": "https://ixride-android-5a7f9.firebaseio.com",
+    "project_id": "ixride-android-5a7f9",
+    "storage_bucket": "ixride-android-5a7f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498553070751:android:0bf77ac843fb0d1b",
+        "android_client_info": {
+          "package_name": "keysight.ixia.hackathon.ixride"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "498553070751-aouqjvlqahm0vjdk6dhu4hrnpbvorp31.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYiZ7S4w7BKV_2z1IgUpwUgHykZHEbmZA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -37,6 +37,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,6 +80,8 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
     private RetroCar updateCar;
 
     private String actionMade;
+
+    private final String TOPIC = "IxRide";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,7 +188,12 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
                     }
 
                 } else {
-                    Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Profile updated!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             } else {
                 Toast.makeText(getApplicationContext(), "Error updating the profile!", Toast.LENGTH_SHORT).show();
@@ -506,6 +514,7 @@ public class RegisterActivity extends AppCompatActivity implements OnMapReadyCal
                     car.setSeatsNumber(Integer.parseInt(registerCarSeatsSpinner.getSelectedItem().toString()));
                     RetroCar insertedRetroCar = retrofitAPIService.addNewCar(insertedProfile.getId(), car);
                     if (insertedRetroCar != null) {
+                        FirebaseMessaging.getInstance().subscribeToTopic(TOPIC);
                         switchIntent();
                     } else {
                         Toast.makeText(getApplicationContext(), "Unable to register! Retry", Toast.LENGTH_SHORT).show();
