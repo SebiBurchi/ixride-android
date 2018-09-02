@@ -105,9 +105,11 @@
             android:id="@+id/registerButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/keysight_button"
             android:text="@string/register_btn"
             android:textAllCaps="false"
+            android:textColor="@android:color/white"
             android:textStyle="bold" />
 
     </LinearLayout>

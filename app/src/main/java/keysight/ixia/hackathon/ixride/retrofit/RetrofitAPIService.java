@@ -3,6 +3,7 @@ package keysight.ixia.hackathon.ixride.retrofit;
 import java.io.IOException;
 import java.util.List;
 
+import keysight.ixia.hackathon.ixride.model.PreliminaryRoute;
 import keysight.ixia.hackathon.ixride.model.RetroCar;
 import keysight.ixia.hackathon.ixride.model.RetroProfile;
 import keysight.ixia.hackathon.ixride.model.RetroUser;
@@ -132,7 +133,6 @@ public class RetrofitAPIService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -144,7 +144,6 @@ public class RetrofitAPIService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -156,7 +155,17 @@ public class RetrofitAPIService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
+    }
 
+    public PreliminaryRoute getPreliminaryRoute(Long userId) {
+        Call<PreliminaryRoute> call = retrofitAPIInterface.getPreliminaryRoute(userId);
+        try {
+            PreliminaryRoute body = call.execute().body();
+            return body;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

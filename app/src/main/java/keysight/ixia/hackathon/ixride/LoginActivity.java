@@ -36,16 +36,18 @@ public class LoginActivity extends AppCompatActivity {
         Bundle b = iin.getExtras();
         if (b != null) {
             String actionMade = (String) b.get("action");
-            switch (actionMade) {
-                case "deleteAccount":
-                    Toast.makeText(getApplicationContext(), "The account was deleted!", Toast.LENGTH_SHORT).show();
-                    break;
-                case "createAccount":
-                    Toast.makeText(getApplicationContext(), "The account was created!", Toast.LENGTH_SHORT).show();
-                    break;
-                case "Logout":
-                    Toast.makeText(getApplicationContext(), "Session lost!", Toast.LENGTH_SHORT).show();
-                    break;
+            if (actionMade != null) {
+                switch (actionMade) {
+                    case "deleteAccount":
+                        Toast.makeText(getApplicationContext(), "The account was deleted!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "createAccount":
+                        Toast.makeText(getApplicationContext(), "The account was created!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case "Logout":
+                        Toast.makeText(getApplicationContext(), "Session lost!", Toast.LENGTH_SHORT).show();
+                        break;
+                }
             }
         }
 
@@ -116,8 +118,6 @@ public class LoginActivity extends AppCompatActivity {
                     LoginActivity.this.runOnUiThread(runnable);
                 }
             }).start();
-
-
         }
     }
 

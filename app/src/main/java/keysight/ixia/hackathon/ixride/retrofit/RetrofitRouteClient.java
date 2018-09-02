@@ -1,7 +1,5 @@
 package keysight.ixia.hackathon.ixride.retrofit;
 
-import android.text.format.Time;
-
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -9,11 +7,11 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RetrofitAPIClient {
+public class RetrofitRouteClient {
 
-    private static Retrofit retrofit = null;
+    private static Retrofit retrofitRoute = null;
 
-    public static Retrofit getRetrofitClient() {
+    public static Retrofit getRetrofitRouteClient() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient.Builder().addInterceptor(interceptor).connectTimeout(300, TimeUnit.SECONDS)
@@ -21,14 +19,12 @@ public class RetrofitAPIClient {
                 .readTimeout(300, TimeUnit.SECONDS).build();
 
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://192.168.1.3:8080")
+        retrofitRoute = new Retrofit.Builder()
+                .baseUrl("https://maps.googleapis.com/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
 
-        return retrofit;
+        return retrofitRoute;
     }
-
-
 }

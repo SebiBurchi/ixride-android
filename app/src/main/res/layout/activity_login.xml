@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="150dp"
+    android:paddingBottom="100dp"
     android:paddingLeft="50dp"
     android:paddingRight="50dp"
-    android:paddingTop="150dp"
+    android:paddingTop="110dp"
     tools:context=".LoginActivity">
 
     <LinearLayout
@@ -16,6 +16,12 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/loginLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/keysight_logo"/>
 
         <EditText
             android:id="@+id/loginUserName"
@@ -38,9 +44,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:background="@drawable/keysight_button"
             android:text="@string/sign_in"
             android:textAllCaps="false"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@android:color/white"/>
 
         <TextView
             android:id="@+id/loginRegisterLink"
@@ -49,7 +57,8 @@
             android:layout_marginTop="16dp"
             android:text="@string/register_link"
             android:clickable="true"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@android:color/holo_red_light"/>
 
     </LinearLayout>
 
